@@ -1,0 +1,5 @@
+id,name,email,age,city
+1,Ravi,ravi@example.com,22,Bengaluru
+2,,anjali@example.com,24,Hyderabad
+3,Kiran,,21,Pune
+4,Meena,meena@example.com,,Chennai
