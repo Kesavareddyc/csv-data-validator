@@ -39,6 +39,12 @@ def validate_csv(file_path):
         print(f"Error reading CSV file: {error}")
         return False
 
+    # Empty CSV validation
+    if not headers:
+        print("Error: CSV file is empty.")
+        add_error("CSV file is empty.")
+        return False
+
     total_rows = len(rows)
     valid_rows = []
 
@@ -223,7 +229,9 @@ def validate_csv(file_path):
     try:
         os.makedirs("reports", exist_ok=True)
 
-        with open(report_path, mode="w", encoding="utf-8") as report:
+        with open(
+            report_path, mode="w", encoding="utf-8"
+        ) as report:
             report.write("CSV DATA VALIDATION REPORT\n")
             report.write("--------------------------\n")
             report.write(f"Status: {status}\n")
@@ -249,6 +257,13 @@ def validate_csv(file_path):
 
 
 def main():
+    global error_count, errors, invalid_rows
+
+    # Reset validation state for each run
+    error_count = 0
+    errors = []
+    invalid_rows = set()
+
     file_path = input("Enter the CSV file path: ").strip()
 
     if not file_path:

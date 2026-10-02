@@ -75,6 +75,58 @@ class TestCSVValidation(unittest.TestCase):
 
         self.assertIn("Status: PASSED", content)
 
+    def test_missing_headers(self):
+        result = main.validate_csv("data/missing_headers_test.csv")
 
+        self.assertTrue(result)
+        self.assertGreater(main.error_count, 0)
+
+    def test_duplicate_ids(self):
+        result = main.validate_csv("data/duplicate_ids_test.csv")
+
+        self.assertTrue(result)
+        self.assertGreater(main.error_count, 0)
+
+    def test_duplicate_emails(self):
+        result = main.validate_csv("data/duplicate_emails_test.csv")
+
+        self.assertTrue(result)
+        self.assertGreater(main.error_count, 0)
+    def test_invalid_email(self):
+        result = main.validate_csv("data/invalid_email_test.csv")
+
+        self.assertTrue(result)
+        self.assertGreater(main.error_count, 0)
+
+    def test_invalid_age(self):
+        result = main.validate_csv("data/invalid_age_test.csv")
+
+        self.assertTrue(result)
+        self.assertGreater(main.error_count, 0)
+
+    def test_invalid_id(self):
+        result = main.validate_csv("data/invalid_id_test.csv")
+
+        self.assertTrue(result)
+        self.assertGreater(main.error_count, 0)  
+
+    def test_missing_values(self):
+        result = main.validate_csv("data/missing_values_test.csv")
+
+        self.assertTrue(result)
+        self.assertGreater(main.error_count, 0)  
+
+    def test_malformed_rows(self):
+        result = main.validate_csv("data/malformed_rows_test.csv")
+
+        self.assertTrue(result)
+        self.assertGreater(main.error_count, 0)
+
+    def test_empty_csv(self):
+        result = main.validate_csv("data/empty_test.csv")
+
+        self.assertFalse(result)
+        self.assertGreater(main.error_count, 0)
+        
 if __name__ == "__main__":
     unittest.main()
