@@ -1,19 +1,21 @@
 
 # CSV Data Validator
 
-A Python project that validates CSV files and generates
-a detailed validation report.
+A Python-based tool that validates CSV files, identifies data quality
+issues, and generates a detailed validation report.
 
 ## Features
 
 - Validate required CSV headers
 - Detect missing values
 - Validate email formats
-- Detect duplicate IDs and emails
+- Detect duplicate IDs and email addresses
 - Validate numeric IDs and age ranges
 - Detect malformed CSV rows
-- Count valid and invalid rows
+- Calculate valid and invalid row counts
 - Generate a detailed validation report
+- Handle missing files and invalid file paths
+- Display clear error messages
 
 ## Technologies
 
@@ -24,24 +26,121 @@ a detailed validation report.
 
 ## Project Structure
 
+```text
 csv-data-validator/
 ├── data/
+│   ├── combined_test.csv
+│   └── ...
 ├── reports/
+│   └── validation_report.txt
 ├── main.py
+├── .gitignore
 └── README.md
+```
+
+## Requirements
+
+- Python 3.8 or later
+- No external Python packages required
 
 ## How to Run
 
-1. Install Python.
-2. Clone or download this project.
-3. Open the project folder in a terminal.
-4. Run:
+1. Clone or download this repository.
+2. Open the project folder in your terminal.
+3. Run the application:
 
+   ```bash
    python main.py
+   ```
 
-## Output
+4. Enter the path of the CSV file when prompted.
 
-The validator displays a validation summary
-and saves a detailed report to:
+   Example:
 
+   ```text
+   Enter the CSV file path: data/combined_test.csv
+   ```
+
+## CSV File Format
+
+The CSV file must contain these required headers:
+
+```csv
+id,name,email,age,city
+1,Kesava,kesava@example.com,22,Bengaluru
+2,Ravi,ravi@example.com,25,Chennai
+```
+
+The validator checks the required columns and validates
+the data in each row.
+
+## Validation Checks
+
+| Check | Description |
+|---|---|
+| Headers | Checks for required columns |
+| Missing values | Identifies empty fields |
+| Email | Checks email format |
+| Duplicate IDs | Detects repeated IDs |
+| Duplicate emails | Detects repeated email addresses |
+| Numeric ID | Checks that IDs are positive integers |
+| Age | Checks that ages are integers between 18 and 100 |
+| Row structure | Detects rows with an incorrect number of columns |
+
+## Sample Output
+
+```text
+CSV DATA VALIDATOR
+------------------
+
+HEADER VALIDATION
+Header validation: Passed
+
+VALIDATION SUMMARY
+------------------
+Total rows: 5
+Valid rows: 2
+Invalid rows: 3
+Total errors: 4
+Status: FAILED
+
+Report saved to: reports/validation_report.txt
+```
+
+The sample output above illustrates the combined test dataset.
+Actual results depend on the CSV file provided.
+
+## Validation Report
+
+After validation, a detailed report is saved to:
+
+```text
 reports/validation_report.txt
+```
+
+The report includes:
+- Validation status
+- Total number of rows
+- Valid and invalid row counts
+- Total number of errors
+- Detailed validation errors
+
+## Error Handling
+
+The application handles:
+- Empty file paths
+- Unsupported file extensions
+- Missing CSV files
+- File-reading errors
+- Report-writing errors
+
+## Future Improvements
+
+- Support configurable validation rules
+- Export invalid rows to a separate CSV file
+- Add automated unit tests
+- Support command-line arguments
+
+## Author
+
+Kesava Reddy
