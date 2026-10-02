@@ -1,14 +1,11 @@
 CSV DATA VALIDATION REPORT
 --------------------------
-Status: FAILED
-Total rows: 5
-Valid rows: 2
-Invalid rows: 3
-Total errors: 4
+Status: PASSED
+Total rows: 0
+Valid rows: 0
+Invalid rows: 0
+Total errors: 0
 
 DETAILED ERRORS
 --------------------------
-Missing value | Row: 5 | Column: email
-Invalid email | Row: 4 | Email: kiran.example.com
-Duplicate ID | Row: 6 | ID: 2
-Invalid age | Row: 6 | Age: 105
+No errors found.

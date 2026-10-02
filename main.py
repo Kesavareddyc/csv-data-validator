@@ -4,9 +4,7 @@ import re
 import os
 
 # File paths
-file_path = "data/combined_test.csv"
 report_path = "reports/validation_report.txt"
-
 expected_headers = ["id", "name", "email", "age", "city"]
 
 error_count = 0
@@ -25,12 +23,27 @@ def add_error(message, row_number=None):
         invalid_rows.add(row_number)
 
 
-print("CSV DATA VALIDATOR")
-print("------------------")
+def validate_csv(file_path):
+    """Read and validate a CSV file."""
+    global error_count
 
-with open(file_path, mode="r", newline="", encoding="utf-8") as file:
-    reader = csv.reader(file)
-    headers = next(reader, [])
+    try:
+        with open(
+            file_path, mode="r", newline="", encoding="utf-8"
+        ) as file:
+            reader = csv.reader(file)
+            headers = next(reader, [])
+            rows = list(reader)
+
+    except (OSError, UnicodeDecodeError, csv.Error) as error:
+        print(f"Error reading CSV file: {error}")
+        return False
+
+    total_rows = len(rows)
+    valid_rows = []
+
+    print("\nCSV DATA VALIDATOR")
+    print("------------------")
 
     # Header validation
     print("\nHEADER VALIDATION")
@@ -48,14 +61,7 @@ with open(file_path, mode="r", newline="", encoding="utf-8") as file:
     else:
         print("Header validation: Passed")
 
-    # Read all data rows
-    rows = list(reader)
-    total_rows = len(rows)
-
-    print("Total rows:", total_rows)
-
-    valid_rows = []
-
+    # Field-level validation
     if missing_headers:
         print(
             "\nField-level validation skipped: "
@@ -64,7 +70,6 @@ with open(file_path, mode="r", newline="", encoding="utf-8") as file:
     else:
         # Row structure validation
         print("\nROW STRUCTURE CHECK")
-
         expected_columns = len(headers)
 
         for row_number, row in enumerate(rows, start=2):
@@ -97,7 +102,6 @@ with open(file_path, mode="r", newline="", encoding="utf-8") as file:
 
         # Email format validation
         print("\nEMAIL FORMAT CHECK")
-
         email_pattern = r"^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$"
         email_index = headers.index("email")
 
@@ -114,7 +118,6 @@ with open(file_path, mode="r", newline="", encoding="utf-8") as file:
 
         # Duplicate ID validation
         print("\nDUPLICATE ID CHECK")
-
         id_index = headers.index("id")
         seen_ids = set()
 
@@ -136,7 +139,6 @@ with open(file_path, mode="r", newline="", encoding="utf-8") as file:
 
         # Numeric validation
         print("\nNUMERIC VALIDATION")
-
         age_index = headers.index("age")
 
         for row_number, row in valid_rows:
@@ -186,7 +188,6 @@ with open(file_path, mode="r", newline="", encoding="utf-8") as file:
 
         # Duplicate email validation
         print("\nDUPLICATE EMAIL CHECK")
-
         seen_emails = set()
 
         for row_number, row in valid_rows:
@@ -205,39 +206,66 @@ with open(file_path, mode="r", newline="", encoding="utf-8") as file:
             else:
                 seen_emails.add(email)
 
-# Calculate summary
-invalid_row_count = len(invalid_rows)
-valid_row_count = total_rows - invalid_row_count
+    # Calculate summary
+    invalid_row_count = len(invalid_rows)
+    valid_row_count = total_rows - invalid_row_count
+    status = "PASSED" if error_count == 0 else "FAILED"
 
-status = "PASSED" if error_count == 0 else "FAILED"
+    print("\nVALIDATION SUMMARY")
+    print("------------------")
+    print("Total rows:", total_rows)
+    print("Valid rows:", valid_row_count)
+    print("Invalid rows:", invalid_row_count)
+    print("Total errors:", error_count)
+    print("Status:", status)
 
-print("\nVALIDATION SUMMARY")
-print("------------------")
-print("Total rows:", total_rows)
-print("Valid rows:", valid_row_count)
-print("Invalid rows:", invalid_row_count)
-print("Total errors:", error_count)
-print("Status:", status)
+    # Save report
+    try:
+        os.makedirs("reports", exist_ok=True)
 
-# Save report
-os.makedirs("reports", exist_ok=True)
+        with open(report_path, mode="w", encoding="utf-8") as report:
+            report.write("CSV DATA VALIDATION REPORT\n")
+            report.write("--------------------------\n")
+            report.write(f"Status: {status}\n")
+            report.write(f"Total rows: {total_rows}\n")
+            report.write(f"Valid rows: {valid_row_count}\n")
+            report.write(f"Invalid rows: {invalid_row_count}\n")
+            report.write(f"Total errors: {error_count}\n")
+            report.write("\nDETAILED ERRORS\n")
+            report.write("--------------------------\n")
 
-with open(report_path, mode="w", encoding="utf-8") as report:
-    report.write("CSV DATA VALIDATION REPORT\n")
-    report.write("--------------------------\n")
-    report.write(f"Status: {status}\n")
-    report.write(f"Total rows: {total_rows}\n")
-    report.write(f"Valid rows: {valid_row_count}\n")
-    report.write(f"Invalid rows: {invalid_row_count}\n")
-    report.write(f"Total errors: {error_count}\n")
+            if errors:
+                for error in errors:
+                    report.write(error + "\n")
+            else:
+                report.write("No errors found.\n")
 
-    report.write("\nDETAILED ERRORS\n")
-    report.write("--------------------------\n")
+        print(f"\nReport saved to: {report_path}")
 
-    if errors:
-        for error in errors:
-            report.write(error + "\n")
-    else:
-        report.write("No errors found.\n")
+    except OSError as error:
+        print(f"Error saving report: {error}")
 
-print(f"\nReport saved to: {report_path}")
+    return True
+
+
+def main():
+    file_path = input("Enter the CSV file path: ").strip()
+
+    if not file_path:
+        print("Error: Please enter a CSV file path.")
+        raise SystemExit(1)
+
+    if not file_path.lower().endswith(".csv"):
+        print("Error: Please provide a CSV file.")
+        raise SystemExit(1)
+
+    if not os.path.isfile(file_path):
+        print(f"Error: File not found: {file_path}")
+        raise SystemExit(1)
+
+    if not validate_csv(file_path):
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()
